@@ -20,6 +20,15 @@ function pakcageMSG(msg)
     return _msg2;
 }
 
+function removeByValue(arr, val) {
+    for(var i=0; i<arr.length; i++) {
+        if(arr[i] == val) {
+            arr.splice(i, 1);
+            break;
+        }
+    }
+}
+
 module.exports =
     (
         function()
@@ -28,8 +37,7 @@ module.exports =
             {
                 ///////
                 ROOMS:{},
-                PLAYERS:{},
-                enter_room:function(ws, data)
+                enter_room:function(ws, data, createPlayer)
                 {
                     if(
                         data.game_id &&
@@ -42,13 +50,17 @@ module.exports =
                         if( !this.ROOMS[UID] )
                         {
                             var room = {};
-                            room.players = {};
+
+                            room.GAME_CONTENT = data.game_id;
+                            room.ROOM_ID = data.room_id;
+
+                            room.players = [];
                             room.broadcast =
                                 function(msg)
                                 {
-                                    for( var ws in this.players )
+                                    for( var i in this.players )
                                     {
-                                        var player = this.players[ws];
+                                        var player = this.players[i];
 
                                         if( player )
                                         {
@@ -60,19 +72,11 @@ module.exports =
                             this.ROOMS[UID] = room;
                         }
 
-                        const PLAYER_ID = ws;
-
-                        if( !this.PLAYERS[PLAYER_ID] )
-                        {
-                            this.PLAYERS[PLAYER_ID] = {};
-                        }
-
-                        var player = this.PLAYERS[PLAYER_ID];
-
+                        var player = createPlayer;
                         player.ROOM = this.ROOMS[UID];
-                        this.ROOMS[UID].players[ws] = player;
-
+                        this.ROOMS[UID].players.push( player );
                         player.player_id = data.player_id;
+
                         player.send =
                             function(msg)
                             {
@@ -92,30 +96,28 @@ module.exports =
                         ws.close();
                     }
                 },
-                leave_room:function(ws)
+                leave_room:function(ws, createPlayer)
                 {
-                    var player = this.PLAYERS[ws];
+                    var player = createPlayer;
 
                     if( player )
                     {
                         var room = player.ROOM;
-                        room.players[ws] = null;
 
-                        delete  player;
-                        player = null;
+                        removeByValue(room.players, player);
                     }
                 },
-                chat:function(ws, data)
+                chat:function(ws, data, createPlayer)
                 {
-                    var player = this.PLAYERS[ws];
+                    var player = createPlayer;
 
-                    if( data.info && player && player.ROOM && player.ROOM[ws] == player )
+                    if( data.info && player && player.ROOM )
                     {
                         /////////
                         var msg = {};
                         msg.type = data.type;
                         msg.player_id = player.player_id;
-                        msg.info = info;
+                        msg.info = data.info;
 
                         const _msg = pakcageMSG(msg);
 

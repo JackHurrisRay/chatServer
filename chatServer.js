@@ -25,6 +25,7 @@ module.exports =
                         function(ws)
                         {
                             console.log('chat client join');
+                            var player = {};
 
                             ws.on('message',
                                 function(message)
@@ -47,11 +48,11 @@ module.exports =
                                     {
                                         "CONN":function(_ws, _data)
                                         {
-                                            chatRoom.enter_room(_ws, _data);
+                                            chatRoom.enter_room(_ws, _data, player);
                                         },
                                         "CHAT":function(_ws, _data)
                                         {
-                                            chatRoom.chat(_ws, _data);
+                                            chatRoom.chat(_ws, _data, player);
                                         }
                                     };
 
@@ -74,8 +75,12 @@ module.exports =
                             ws.on('close',
                                 function(message)
                                 {
-                                    chatRoom.leave_room(ws);
+                                    chatRoom.leave_room(ws, player);
                                     console.log('chat client leave');
+
+                                    delete  player;
+                                    player = null;
+
                                     return;
                                 }
                             );
