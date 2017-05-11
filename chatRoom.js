@@ -10,11 +10,15 @@ module.exports =
             {
                 ///////
                 ROOMS:{},
-                enter_room:function()
+                enter_room:function(ws, data)
                 {
 
                 },
-                leave_room:function()
+                leave_room:function(ws)
+                {
+
+                },
+                chat:function(ws, data)
                 {
 
                 }
