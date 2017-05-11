@@ -10,7 +10,11 @@ module.exports =
         function() {
 
             const WS_PORT = 1949;
-            var websocket = new WebSocket({port:WS_PORT});
+            var websocket = new WebSocket(
+                {
+                    port:WS_PORT
+                }
+            );
 
             var instance =
             {
