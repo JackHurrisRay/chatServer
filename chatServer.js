@@ -20,7 +20,7 @@ module.exports =
             {
                 run:function()
                 {
-                    console.log('Web Socket is running');
+                    console.log('Web Socket is running, port:'+WS_PORT.toString());
                     websocket.on('connection',
                         function(ws)
                         {
