@@ -1,7 +1,6 @@
 /**
  * Created by Jack.L on 2017/5/11.
  */
-
 var base64 = require('./base64');
 
 function getGameRoomUID(game_id, room_id)
