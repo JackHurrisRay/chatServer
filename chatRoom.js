@@ -79,7 +79,14 @@ module.exports =
                         player.send =
                             function(msg)
                             {
-                                ws.send(msg);
+                                try
+                                {
+                                    ws.send(msg);
+                                }
+                                catch (e)
+                                {
+                                    ws.close();
+                                }
                             };
 
                         var msg    = {};
@@ -103,7 +110,10 @@ module.exports =
                     {
                         var room = player.ROOM;
 
-                        removeByValue(room.players, player);
+                        if( room && room.players )
+                        {
+                            removeByValue(room.players, player);
+                        }
                     }
                 },
                 chat:function(ws, data, createPlayer)
